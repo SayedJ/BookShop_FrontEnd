@@ -12,14 +12,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.Objects;
+
 @Entity
 @Table(name = "orders")
-public class Order implements Serializable{
+public class Order implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private long orderId;
+    private Long orderId;
 
     @NotNull
     @Column(name = "date")
@@ -41,6 +45,16 @@ public class Order implements Serializable{
 
     private List<OrderBook> books = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties(value = {
+            
+            "firstname",
+            "lastName",
+            "email"
+            
+    })
+    private User user;
 
     public void addBook(Books book) {
         OrderBook orderBook = new OrderBook(this, book);
@@ -56,11 +70,11 @@ public class Order implements Serializable{
         orderBook.setBook(null);
     }
 
-    public long getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(long orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
@@ -96,6 +110,13 @@ public class Order implements Serializable{
         this.books = books;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public int hashCode() {
@@ -107,6 +128,6 @@ public class Order implements Serializable{
         if (this == obj) return true;
         if (!(obj instanceof Order)) return false;
         Order order = (Order) obj;
-        return Objects.equals(getOrderId(), order.getOrderId());
+        return getOrderId() != null && Objects.equals(getOrderId(), order.getOrderId());
     }
 }
